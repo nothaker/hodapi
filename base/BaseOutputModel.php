@@ -44,7 +44,7 @@ abstract class BaseOutputModel
    * @param BaseOutputModel|null $parent
    * @throws \ReflectionException
    */
-  public function __construct(BaseOutputModel $parent)
+  public function __construct(BaseOutputModel $parent = null)
   {
     $this->__parent=$parent;
     // fetch properties
@@ -72,6 +72,7 @@ abstract class BaseOutputModel
    */
   public static function build(array $declaration, array $data, BaseOutputModel $parent=null) {
     $asMany=$declaration[self::RELATION_INDEX] === self::PROP_AS_MANY;
+
     if (!$asMany) {
       $data = [$data]; // work in array mode
     }
@@ -79,7 +80,9 @@ abstract class BaseOutputModel
     $instances=[];
     foreach ($data as $item) {
       $instance=new $declaration[self::CLASS_INDEX]($parent); /* @var BaseOutputModel $instance */
+
       $instance->applyPropertyValues($item);
+
       // processing dependencies
       foreach ($instance->dependencies() as $propertyName=> $dependency) {
         // if property doesn't exist
@@ -88,7 +91,7 @@ abstract class BaseOutputModel
         }
         // if target data didn't contains entities
         // if dependency has been declared then the target data must be contains field as null anyway
-        if (!isset($item[$propertyName])) {
+        if (!array_key_exists($propertyName, $item)) {
           throw RestmOutputModelException::makeNotFoundDependency($propertyName, $instance);
         }
 
@@ -127,7 +130,7 @@ abstract class BaseOutputModel
    */
   protected function applyPropertyValues(array $values) : void {
     foreach ($this->__attributeNames as $attributeName) {
-      if (!isset($values[$attributeName])) {
+      if (!array_key_exists($attributeName, $values)) {
         throw RestmOutputModelException::makeNotFoundAttribute($attributeName);
       }
       $this->{$attributeName}=$values[$attributeName];

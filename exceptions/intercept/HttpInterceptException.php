@@ -16,7 +16,7 @@ use icework\restm\exceptions\RestmException;
  */
 abstract class HttpInterceptException extends RestmException implements InterceptorInterface
 {
-  private array $__declaration;
+  private $__declaration;
 
   /**
    * HttpInterceptException constructor.

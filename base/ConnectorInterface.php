@@ -12,7 +12,7 @@ interface ConnectorInterface
    * @param string $base Url or something else
    * @return ConnectorInterface
    */
-  function open(string $base) : ConnectorInterface;
+  function open(string $base);
 
   /**
    * Set the method used
@@ -20,14 +20,14 @@ interface ConnectorInterface
    * @param array $params Params for the method
    * @return ConnectorInterface
    */
-  function method(string $method, array $params=[]) : ConnectorInterface;
+  function method(string $method, array $params=[]);
 
   /**
    * Set input model if need
    * @param InputModelInterface $inputModel
    * @return ConnectorInterface
    */
-  function setInputModel(InputModelInterface $inputModel) : ConnectorInterface;
+  function setInputModel(InputModelInterface $inputModel);
 
   /**
    * Run

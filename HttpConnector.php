@@ -37,18 +37,21 @@ class HttpConnector implements ConnectorInterface
   const HTTP_BAD_REQUEST=400;
 
   // based
-  private array $__baseUrl;
-  private string $__method;
-  private InputModelInterface $__inputModel;
+  private $__baseUrl;
+  private $__method;
+  /**
+   * @var InputModelInterface
+   */
+  private $__inputModel;
   /**
    * @var InterceptorInterface[]
    */
-  private array $__interceptors=[];
+  private $__interceptors=[];
 
   // specify for http
-  private array $__headers=[];
-  private array $__query=[];
-  private int $__mode=self::DEFAULT_MODE;
+  private $__headers=[];
+  private $__query=[];
+  private $__mode=self::DEFAULT_MODE;
 
   /**
    * Open connector with baseUrl
@@ -181,10 +184,12 @@ class HttpConnector implements ConnectorInterface
       if ($httpStatus <= 0) {
         throw RestmHttpConnectorException::makeWrongCurlResponse(curl_error($handle));
       }
+
       // empty body
       if (!is_string($response) || $response==='' || $response===null) {
         throw RestmHttpConnectorException::makeEmptyBody();
       }
+
       // if ok
       if ($httpStatus==self::HTTP_OK) { //todo processing other Good codes
         $json=json_decode($response, true);
@@ -206,9 +211,9 @@ class HttpConnector implements ConnectorInterface
 
   /**
    * Add interceptor for httpStatus. To intercept responses other than [[HttpConnector::HTTP_OK]].
-   * @param $httpStatus
+   * @param int $httpStatus
    * @param InterceptorInterface $interceptor
-   * @return ConnectorInterface
+   * @return HttpConnector
    */
   function addInterceptor(int $httpStatus, InterceptorInterface $interceptor) : HttpConnector {
     $this->__interceptors[$httpStatus]=$interceptor;
