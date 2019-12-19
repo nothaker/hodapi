@@ -3,8 +3,6 @@
 
 namespace icework\restm;
 
-
-use common\components\volga\VolgaConnectorException;
 use icework\restm\base\BaseOutputModel;
 use icework\restm\base\ConnectorInterface;
 use icework\restm\base\InputModelInterface;
@@ -12,7 +10,6 @@ use icework\restm\base\InterceptorInterface;
 use icework\restm\exceptions\intercept\HttpInterceptException;
 use icework\restm\exceptions\RestmHttpConnectorException;
 use icework\restm\exceptions\RestmOutputModelException;
-use yii\helpers\Json;
 
 class HttpConnector implements ConnectorInterface
 {
