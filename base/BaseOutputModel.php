@@ -87,12 +87,12 @@ abstract class BaseOutputModel
       foreach ($instance->dependencies() as $propertyName=> $dependency) {
         // if property doesn't exist
         if (!$instance->hasAttribute($propertyName)) {
-          throw RestmOutputModelException::makeInvalidDependency($propertyName);
+          throw RestmOutputModelException::makeInvalidDependency($propertyName, get_class($instance));
         }
         // if target data didn't contains entities
         // if dependency has been declared then the target data must be contains field as null anyway
         if (!array_key_exists($propertyName, $item)) {
-          throw RestmOutputModelException::makeNotFoundDependency($propertyName, $instance);
+          throw RestmOutputModelException::makeNotFoundDependency($propertyName, get_class($instance));
         }
 
         if (is_array($item[$propertyName])) {
@@ -131,7 +131,7 @@ abstract class BaseOutputModel
   protected function applyPropertyValues(array $values) : void {
     foreach ($this->__attributeNames as $attributeName) {
       if (!array_key_exists($attributeName, $values)) {
-        throw RestmOutputModelException::makeNotFoundAttribute($attributeName);
+        throw RestmOutputModelException::makeNotFoundAttribute($attributeName, $this);
       }
       $this->{$attributeName}=$values[$attributeName];
     }

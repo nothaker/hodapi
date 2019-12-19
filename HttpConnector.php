@@ -3,16 +3,13 @@
 
 namespace icework\restm;
 
-
-use common\components\volga\VolgaConnectorException;
 use icework\restm\base\BaseOutputModel;
 use icework\restm\base\ConnectorInterface;
 use icework\restm\base\InputModelInterface;
-use icework\restm\base\InterceptorInterface;
+use icework\restm\base\InterceptExceptionInterface;
 use icework\restm\exceptions\intercept\HttpInterceptException;
 use icework\restm\exceptions\RestmHttpConnectorException;
 use icework\restm\exceptions\RestmOutputModelException;
-use yii\helpers\Json;
 
 class HttpConnector implements ConnectorInterface
 {
@@ -44,9 +41,9 @@ class HttpConnector implements ConnectorInterface
    */
   private $__inputModel;
   /**
-   * @var InterceptorInterface[]
+   * @var InterceptExceptionInterface[]
    */
-  private $__interceptors=[];
+  private $__exceptions=[];
 
   // specify for http
   private $__headers=[];
@@ -196,7 +193,7 @@ class HttpConnector implements ConnectorInterface
         return BaseOutputModel::build($modelDependency, $json);
       }
       // processing interception with exception
-      $interceptor=$this->__interceptors[$httpStatus] ?? null;
+      $interceptor=$this->__exceptions[$httpStatus] ?? null;
       if ($interceptor) {
         $json=json_decode($response, true);
         $preparedData=BaseOutputModel::build($interceptor->getDeclaration(), $json);
@@ -210,13 +207,13 @@ class HttpConnector implements ConnectorInterface
   }
 
   /**
-   * Add interceptor for httpStatus. To intercept responses other than [[HttpConnector::HTTP_OK]].
+   * Add interceptor for httpStatus exceptions. To intercept responses other than [[HttpConnector::HTTP_OK]].
    * @param int $httpStatus
-   * @param InterceptorInterface $interceptor
+   * @param InterceptExceptionInterface $exception
    * @return HttpConnector
    */
-  function addInterceptor(int $httpStatus, InterceptorInterface $interceptor) : HttpConnector {
-    $this->__interceptors[$httpStatus]=$interceptor;
+  function addException(int $httpStatus, InterceptExceptionInterface $exception) : HttpConnector {
+    $this->__exceptions[$httpStatus]=$exception;
     return $this;
   }
 

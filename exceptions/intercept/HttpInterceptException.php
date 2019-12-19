@@ -5,7 +5,7 @@ namespace icework\restm\exceptions\intercept;
 
 
 use icework\restm\base\BaseOutputModel;
-use icework\restm\base\InterceptorInterface;
+use icework\restm\base\InterceptExceptionInterface;
 use icework\restm\exceptions\RestmException;
 
 /**
@@ -14,7 +14,7 @@ use icework\restm\exceptions\RestmException;
  * To intercept responses other than [[HttpConnector::HTTP_OK]]
  * @package icework\restm\base
  */
-abstract class HttpInterceptException extends RestmException implements InterceptorInterface
+abstract class HttpInterceptException extends RestmException implements InterceptExceptionInterface
 {
   private $__declaration;
 

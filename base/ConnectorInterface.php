@@ -3,8 +3,6 @@
 
 namespace icework\restm\base;
 
-use icework\restm\base\BaseOutputModel;
-
 interface ConnectorInterface
 {
   /**

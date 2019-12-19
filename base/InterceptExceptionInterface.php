@@ -4,7 +4,7 @@
 namespace icework\restm\base;
 
 
-interface InterceptorInterface
+interface InterceptExceptionInterface
 {
   /**
    * @see BaseOutputModel::asOne()
