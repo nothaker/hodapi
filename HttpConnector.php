@@ -3,15 +3,15 @@
 
 namespace icework\restm;
 
-use icework\restm\base\BaseOutputModel;
-use icework\restm\base\ConnectorInterface;
-use icework\restm\base\InputModelInterface;
-use icework\restm\base\InterceptExceptionInterface;
-use icework\restm\exceptions\intercept\HttpInterceptException;
+use icework\restm\base\Model;
+use icework\restm\interfaces\Connector;
+use icework\restm\interfaces\InputModel;
+use icework\restm\interfaces\InterceptException;
+use icework\restm\HttpInterceptException;
 use icework\restm\exceptions\RestmHttpConnectorException;
-use icework\restm\exceptions\RestmOutputModelException;
+use icework\restm\exceptions\RestmModelException;
 
-class HttpConnector implements ConnectorInterface
+class HttpConnector implements Connector
 {
   const ACCEPT_HEADER='Accept';
   const CONTENT_TYPE_HEADER='Content-Type';
@@ -37,11 +37,11 @@ class HttpConnector implements ConnectorInterface
   private $__baseUrl;
   private $__method;
   /**
-   * @var InputModelInterface
+   * @var \icework\restm\interfaces\InputModel
    */
   private $__inputModel;
   /**
-   * @var InterceptExceptionInterface[]
+   * @var InterceptException[]
    */
   private $__exceptions=[];
 
@@ -102,11 +102,11 @@ class HttpConnector implements ConnectorInterface
 
   /**
    * @inheritDoc
-   * @param InputModelInterface $inputModel
+   * @param InputModel $inputModel
    * @return HttpConnector
    * @throws RestmHttpConnectorException
    */
-  public function setInputModel(InputModelInterface $inputModel) : HttpConnector {
+  public function setInputModel(InputModel $inputModel) : HttpConnector {
     if ($inputModel === null) {
       throw RestmHttpConnectorException::makeWrongInput();
     }
@@ -135,10 +135,10 @@ class HttpConnector implements ConnectorInterface
   /**
    * Run connector
    * @param array $modelDependency
-   * @return base\BaseOutputModel|base\BaseOutputModel[]|void
+   * @return base\Model|base\Model[]|void
    * @throws RestmHttpConnectorException
    * @throws HttpInterceptException
-   * @throws RestmOutputModelException
+   * @throws RestmModelException
    */
   public function run(array $modelDependency)
   {
@@ -190,13 +190,13 @@ class HttpConnector implements ConnectorInterface
       // if ok
       if ($httpStatus==self::HTTP_OK) { //todo processing other Good codes
         $json=json_decode($response, true);
-        return BaseOutputModel::build($modelDependency, $json);
+        return Model::build($modelDependency, $json);
       }
       // processing interception with exception
       $interceptor=$this->__exceptions[$httpStatus] ?? null;
       if ($interceptor) {
         $json=json_decode($response, true);
-        $preparedData=BaseOutputModel::build($interceptor->getDeclaration(), $json);
+        $preparedData=Model::build($interceptor->getDeclaration(), $json);
         $interceptor->populate($preparedData);
         throw $interceptor;
       }
@@ -209,10 +209,10 @@ class HttpConnector implements ConnectorInterface
   /**
    * Add interceptor for httpStatus exceptions. To intercept responses other than [[HttpConnector::HTTP_OK]].
    * @param int $httpStatus
-   * @param InterceptExceptionInterface $exception
+   * @param InterceptException $exception
    * @return HttpConnector
    */
-  function addException(int $httpStatus, InterceptExceptionInterface $exception) : HttpConnector {
+  function addException(int $httpStatus, InterceptException $exception) : HttpConnector {
     $this->__exceptions[$httpStatus]=$exception;
     return $this;
   }

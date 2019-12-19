@@ -3,7 +3,11 @@
 
 namespace icework\restm\exceptions;
 
-
+/**
+ * Class RestmHttpConnectorException
+ * Exception for [[HttpConnector]] functionality
+ * @package icework\restm\exceptions
+ */
 class RestmHttpConnectorException extends RestmException {
   public static function makeWrongBaseUrl($baseUrl) {
     return new RestmHttpConnectorException("base url '{$baseUrl}' must be a base fucking url, not be a url with the question mark (?) separators!");

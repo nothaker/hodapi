@@ -1,12 +1,11 @@
 <?php
 
 
-namespace icework\restm\exceptions\intercept;
+namespace icework\restm;
 
 
-use icework\restm\base\BaseOutputModel;
-use icework\restm\base\InterceptExceptionInterface;
-use icework\restm\exceptions\RestmException;
+use icework\restm\base\Model;
+use icework\restm\interfaces\InterceptException;
 
 /**
  * Base Class HttpInterceptException
@@ -14,15 +13,15 @@ use icework\restm\exceptions\RestmException;
  * To intercept responses other than [[HttpConnector::HTTP_OK]]
  * @package icework\restm\base
  */
-abstract class HttpInterceptException extends RestmException implements InterceptExceptionInterface
+abstract class HttpInterceptException extends \Exception implements InterceptException
 {
   private $__declaration;
 
   /**
    * HttpInterceptException constructor.
-   * @see BaseOutputModel::asMany()
-   * @see BaseOutputModel::asOne()
    * @param array $declaration Use for declare dependency [[BaseOutputModel::asMany()]] or [[BaseOutputModel::asOne()]]
+   *@see Model::asOneDeclaration()
+   * @see Model::asManyDeclaration()
    */
   public function __construct(array $declaration)
   {

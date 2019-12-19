@@ -1,14 +1,17 @@
 <?php
 
 
-namespace icework\restm\base;
+namespace icework\restm\interfaces;
 
-interface ConnectorInterface
+use icework\restm\interfaces\InputModel;
+use icework\restm\base\Model;
+
+interface Connector
 {
   /**
    * Open connector
    * @param string $base Url or something else
-   * @return ConnectorInterface
+   * @return Connector
    */
   function open(string $base);
 
@@ -16,21 +19,21 @@ interface ConnectorInterface
    * Set the method used
    * @param string $method Path of method
    * @param array $params Params for the method
-   * @return ConnectorInterface
+   * @return Connector
    */
   function method(string $method, array $params=[]);
 
   /**
    * Set input model if need
-   * @param InputModelInterface $inputModel
-   * @return ConnectorInterface
+   * @param InputModel $inputModel
+   * @return Connector
    */
-  function setInputModel(InputModelInterface $inputModel);
+  function setInputModel(InputModel $inputModel);
 
   /**
    * Run
    * @param array $modelDependency [[BaseOutputModel::asMany()]] or [[BaseOutputModel::asOne()]]
-   * @return BaseOutputModel|BaseOutputModel[]
+   * @return Model|Model[]
    */
   function run(array $modelDependency);
 }
