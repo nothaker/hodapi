@@ -64,24 +64,6 @@ class MUser extends Model
   }  
 }]
 ```
-То неплохо бы иметь следующие описание в виде strict-моделей и методы для их безопасной загрузки:
-```json
-[{
-  "id": 1,
-  "username": "john",
-  "mather": {
-    "id": 21,
-    "username": "jessy"
-}  
-}, {
-  "id": 2,
-  "username": "doe",
-  "mather": {
-    "id": 22,
-    "username": "riot"
-  }  
-}]
-```
 ```php
 use \icework\restm\base\Model;
 
@@ -200,17 +182,17 @@ try {
 
 ```php
 use yii\base\Component;
-use \icework\restm\HttpConnector;
-use icework\restm\interfaces\InputModel;
+
+// ... other use
 
 class Client extends Component
 {
   const METHOD_AUTH='user/auth';
 
   // configurable property
-  public string $baseUrl;
+  public $baseUrl;
   
-  protected function createConnector() : \icework\restm\HttpConnector {
+  protected function createConnector() : HttpConnector {
     return (new HttpConnector())
       ->open($this->baseUrl)
       ->addHeaders([
@@ -224,7 +206,7 @@ class Client extends Component
       ->setInputModel($model)
       ->addException(
         HttpConnector::HTTP_BAD_REQUEST,
-        new InvalidInterceptException(EValidationItem::asMany())
+        new InvalidInterceptException(EValidationItem::asManyDeclaration())
       )
       ->asPostRequest()
       ->run(JsonAuth::asOneDeclaration());
