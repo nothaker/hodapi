@@ -79,8 +79,11 @@ abstract class BaseOutputModel
 
     $instances=[];
     foreach ($data as $item) {
-      $instance=new $declaration[self::CLASS_INDEX]($parent); /* @var BaseOutputModel $instance */
+      if (!is_array($item)) {
+        throw RestmOutputModelException::maleInvalidEntity($declaration[self::CLASS_INDEX], gettype($item));
+      }
 
+      $instance=new $declaration[self::CLASS_INDEX]($parent); /* @var BaseOutputModel $instance */
       $instance->applyPropertyValues($item);
 
       // processing dependencies
@@ -95,9 +98,14 @@ abstract class BaseOutputModel
           throw RestmOutputModelException::makeNotFoundDependency($propertyName, get_class($instance));
         }
 
-        if (is_array($item[$propertyName])) {
-          $instance->{$propertyName}=BaseOutputModel::build($dependency, $item[$propertyName], $instance);
+        // for AS_MANY declaration source field must be an array
+        if ($dependency[self::RELATION_INDEX] === self::PROP_AS_MANY && !is_array($item[$propertyName])) {
+          throw RestmOutputModelException::makeInvalidSource(get_class($instance), $propertyName, "array", gettype($item[$propertyName]));
         }
+
+        $instance->{$propertyName}=$item[$propertyName] !== null // for other situations
+          ? BaseOutputModel::build($dependency, $item[$propertyName], $instance)
+          : null;
       }
       $instances[]=$instance;
     }
@@ -135,5 +143,33 @@ abstract class BaseOutputModel
       }
       $this->{$attributeName}=$values[$attributeName];
     }
+  }
+
+  /**
+   * To Array recursive
+   * @return array
+   */
+  public function toArray() : array {
+    $data=[];
+    foreach ($this->__attributeNames as $attributeName) {
+      $data[$attributeName]=$this->{$attributeName};
+    }
+    foreach ($this->dependencies() as $dependencyName => $declaration) {
+      $asMany=$declaration[self::RELATION_INDEX] === self::PROP_AS_MANY;
+      $children=!$asMany
+        ? [$this->{$dependencyName}]
+        : $this->{$dependencyName};
+
+      $dependData=[];
+      foreach ($children as $child) { /* @var $child BaseOutputModel */
+        $dependData[]=$child instanceof BaseOutputModel
+          ? $child->toArray()
+          : null;
+      }
+      $data[$dependencyName]=$asMany
+        ? $dependData
+        : array_pop($dependData);
+    }
+    return $data;
   }
 }

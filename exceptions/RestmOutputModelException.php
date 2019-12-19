@@ -16,4 +16,10 @@ class RestmOutputModelException extends RestmException
   public static function makeNotFoundDependency($dependencyName, $targetClass) {
     return new RestmOutputModelException("Dependency <{$dependencyName}> not found in {$targetClass}");
   }
+  public static function makeInvalidSource($targetClass, $attributeName, $targetType, $sourceType) {
+    return new RestmOutputModelException("Incompatible types. Attribute {$targetClass}::{$attributeName} must be an '{$targetType}' but source type is '{$sourceType}'");
+  }
+  public static function maleInvalidEntity($targetClass, $sourceType) {
+    return new RestmOutputModelException("Incompatible types. Json entity for {$targetClass} must be an array, given {$sourceType}");
+  }
 }
